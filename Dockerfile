@@ -9,6 +9,4 @@ FROM alpine:latest
 WORKDIR /root/
 COPY --from=builder /go/src/github.com/bethanyj28/go-api-starter/app .
 
-ENTRYPOINT ["./app"]
-
-EXPOSE 8080
+CMD ["./app"]
