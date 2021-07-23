@@ -1,7 +1,9 @@
 package main
 
 import (
+	"fmt"
 	"log"
+	"os"
 	"time"
 
 	"github.com/kelseyhightower/envconfig"
@@ -22,7 +24,7 @@ func main() {
 		logger.Fatal(errors.Wrap(err, "failed to read envconfig").Error())
 	}
 
-	svr := newServer(c.Address, c.Timeout, logger)
+	svr := newServer(fmt.Sprintf("0.0.0.0:%s", os.Getenv("PORT")), c.Timeout, logger)
 
 	log.Fatal(svr.httpServer.ListenAndServe())
 }
