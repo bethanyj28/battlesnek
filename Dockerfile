@@ -10,4 +10,5 @@ FROM alpine:latest
 WORKDIR /root/
 COPY --from=builder /go/src/github.com/bethanyj28/battlesnek/app .
 
+EXPOSE $PORT
 CMD ["./app"]
