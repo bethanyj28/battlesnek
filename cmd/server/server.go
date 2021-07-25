@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/bethanyj28/battlesnek/internal/battle"
-	"github.com/bethanyj28/battlesnek/internal/battle/random"
+	"github.com/bethanyj28/battlesnek/internal/battle/simple"
 	"github.com/sirupsen/logrus"
 )
 
@@ -19,7 +19,7 @@ func newServer(addr string, timeout time.Duration, logger *logrus.Logger) *serve
 	svr := &server{logger: logger}
 	svr.buildHTTPServer(addr, timeout)
 
-	svr.snake = random.NewSnake()
+	svr.snake = simple.NewSnake()
 
 	return svr
 }
