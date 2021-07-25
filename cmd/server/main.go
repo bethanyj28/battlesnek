@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"log"
-	"os"
 	"time"
 
 	"github.com/kelseyhightower/envconfig"
@@ -13,7 +12,8 @@ import (
 
 // Config represents environment variables
 type Config struct {
-	Address string        `default:"0.0.0.0:8080"`
+	Host    string        `default:"0.0.0.0"`
+	Port    string        `default:"8080"`
 	Timeout time.Duration `default:"5s"`
 }
 
@@ -24,7 +24,7 @@ func main() {
 		logger.Fatal(errors.Wrap(err, "failed to read envconfig").Error())
 	}
 
-	svr := newServer(fmt.Sprintf("0.0.0.0:%s", os.Getenv("PORT")), c.Timeout, logger)
+	svr := newServer(fmt.Sprintf("%s:%s", c.Host, c.Port), c.Timeout, logger)
 
 	log.Fatal(svr.httpServer.ListenAndServe())
 }

@@ -19,7 +19,11 @@ func (s *server) buildHTTPServer(addr string, timeout time.Duration) {
 func (s *server) buildRoutes() *mux.Router {
 	r := mux.NewRouter()
 
+	r.HandleFunc("/", s.handleIndex())
 	r.HandleFunc("/health", s.handleHealth())
+	r.HandleFunc("/start", s.handleStart())
+	r.HandleFunc("/move", s.handleMove())
+	r.HandleFunc("/end", s.handleEnd())
 
 	return r
 }
