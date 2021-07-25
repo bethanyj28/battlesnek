@@ -1,5 +1,5 @@
 build:
-	docker build -t bethanyj28/battlesnek .
+	docker build -f Dockerfile.dev -t bethanyj28/battlesnek .
 run:
 	docker run --rm -p 8080:8080 bethanyj28/battlesnek
 test:
