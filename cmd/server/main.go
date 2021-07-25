@@ -13,7 +13,7 @@ import (
 // Config represents environment variables
 type Config struct {
 	Host    string        `default:"0.0.0.0"`
-	Port    string        `default:"8080"`
+	Port    string        `envconfig:"PORT" default:"8080"`
 	Timeout time.Duration `default:"5s"`
 }
 
