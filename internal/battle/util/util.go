@@ -63,6 +63,9 @@ func potentialPositions(head internal.Coord) map[direction]internal.Coord {
 func convertCoordsToGrid(coords []internal.Coord) map[int]map[int]bool {
 	grid := map[int]map[int]bool{}
 	for _, coord := range coords {
+		if _, ok := grid[coord.X]; !ok {
+			grid[coord.X] = map[int]bool{}
+		}
 		grid[coord.X][coord.Y] = true
 	}
 
