@@ -35,7 +35,7 @@ func (s *Snake) Move(state internal.GameState) (string, error) {
 func (s *Snake) Info() internal.Style {
 	return internal.Style{
 		Color: "#00cc99",
-		Head:  "freckled",
-		Tail:  "beluga",
+		Head:  "beluga",
+		Tail:  "freckled",
 	}
 }
