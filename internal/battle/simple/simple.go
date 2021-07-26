@@ -1,6 +1,8 @@
 package simple
 
 import (
+	"math/rand"
+
 	"github.com/bethanyj28/battlesnek/internal"
 	"github.com/bethanyj28/battlesnek/internal/battle/util"
 )
@@ -17,9 +19,13 @@ func NewSnake() *Snake {
 func (s *Snake) Move(state internal.GameState) (string, error) {
 	avoidSelf := util.AvoidSelf(state.You)
 	avoidWall := util.AvoidWall(state.Board, state.You.Head)
-	options := append(avoidSelf, avoidWall...)
+	options := []string{}
 
-	return findOptimal(options), nil
+	if len(avoidWall) < 4 { // which walls to worry about
+		options = findAvailable(avoidSelf, avoidWall)
+	}
+
+	return options[rand.Intn(len(options))], nil
 }
 
 // Info returns the style info for a simple snake
@@ -31,23 +37,15 @@ func (s *Snake) Info() internal.Style {
 	}
 }
 
-func findOptimal(options []string) string {
-	counts := map[string]int{}
-	for _, opts := range options {
-		if _, ok := counts[opts]; !ok {
-			counts[opts] = 1
-			continue
-		}
-		counts[opts]++
-	}
-
-	max := 0
-	optimal := ""
-	for k, v := range counts {
-		if v > max {
-			optimal = k
+func findAvailable(self, wall []string) []string {
+	available := []string{}
+	for _, s := range self {
+		for _, w := range wall {
+			if s == w {
+				available = append(available, s)
+				break
+			}
 		}
 	}
-
-	return optimal
+	return available
 }
