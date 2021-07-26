@@ -1,6 +1,8 @@
 package util
 
-import "github.com/bethanyj28/battlesnek/internal"
+import (
+	"github.com/bethanyj28/battlesnek/internal"
+)
 
 type direction int
 
@@ -12,7 +14,7 @@ const (
 )
 
 func (d direction) String() string {
-	return [...]string{"left", "right", "up", "down"}[d]
+	return [...]string{"", "left", "right", "up", "down"}[d]
 }
 
 // AvoidSelf returns the moves that will prevent the snake from running into itself
@@ -22,7 +24,7 @@ func AvoidSelf(self internal.Battlesnake) []string {
 	options := []string{}
 
 	for dir, coord := range pos {
-		if _, ok := avoid[coord.X][coord.Y]; !ok {
+		if _, ok := avoid[coord.X][coord.Y]; ok {
 			continue
 		}
 		options = append(options, dir.String())
