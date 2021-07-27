@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"github.com/bethanyj28/battlesnek/internal"
@@ -21,7 +22,7 @@ func (s *server) handleStart() http.HandlerFunc {
 		}
 
 		s.logger.WithFields(logrus.Fields{
-			"game_state": state,
+			"game_state": fmt.Sprintf("%+v", state),
 		}).Info("START")
 
 		// TODO: store game info in cache for reasons
