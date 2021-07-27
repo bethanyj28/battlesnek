@@ -1,9 +1,8 @@
-name: Deploy staging
+name: Deploy prod
 
 on:
-  push:
-    branches:
-      - main
+  release:
+    types: [published]
 
 jobs:
   build:
@@ -13,7 +12,7 @@ jobs:
       - uses: akhileshns/heroku-deploy@v3.12.12 # This is the action
         with:
           heroku_api_key: ${{secrets.HEROKU_API_KEY}}
-          heroku_app_name: "bethanyj28-battlesnek-staging" #Must be unique in Heroku
+          heroku_app_name: "bethanyj28-battlesnek" #Must be unique in Heroku
           heroku_email: "bethanyjanos28@gmail.com"
           usedocker: true
-          healthcheck: "https://bethanyj28-battlesnek-staging.herokuapp.com/health"
+          healthcheck: "https://bethanyj28-battlesnek.herokuapp.com/health"
