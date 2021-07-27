@@ -50,6 +50,10 @@ func (s *server) handleMove() http.HandlerFunc {
 			return
 		}
 
+		s.logger.WithFields(logrus.Fields{
+			"move": resp.Move,
+		}).Error("MOVE")
+
 		w.WriteHeader(http.StatusOK)
 		w.Write(b)
 	}
