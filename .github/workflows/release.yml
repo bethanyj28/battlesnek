@@ -16,3 +16,4 @@ jobs:
           heroku_email: "bethanyjanos28@gmail.com"
           usedocker: true
           healthcheck: "https://bethanyj28-battlesnek.herokuapp.com/health"
+          delay: 30
