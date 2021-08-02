@@ -113,14 +113,14 @@ func TestPotentialPositions(t *testing.T) {
 	type testcase struct {
 		name     string
 		input    internal.Coord
-		expected map[direction]internal.Coord
+		expected choices
 	}
 
 	testcases := []testcase{
 		{
 			name:  "success",
 			input: internal.Coord{X: 1, Y: 1},
-			expected: map[direction]internal.Coord{
+			expected: choices{
 				left:  internal.Coord{X: 0, Y: 1},
 				right: internal.Coord{X: 2, Y: 1},
 				up:    internal.Coord{X: 1, Y: 2},
