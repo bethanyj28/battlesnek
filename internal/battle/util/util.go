@@ -56,6 +56,7 @@ func AvoidOthers(board internal.Board, head internal.Coord) []string {
 	enemyPos := []internal.Coord{}
 	for _, enemy := range board.Snakes {
 		enemyPos = append(enemyPos, enemy.Body...)
+		enemyPos = append(enemyPos, enemy.Head)
 	}
 
 	avoid := convertCoordsToGrid(enemyPos)
