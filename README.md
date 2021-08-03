@@ -17,6 +17,7 @@ To run this api locally, simply run `make build && make run`, and it will launch
 ## TODO
 - [x] Deployments with Github Actions and Heroku
 - [x] Set up base snake API
-- [ ] Create a more intelligent snake
+- [x] Create a more intelligent snake
 - [ ] Dynamically switch snakes with authenticated endpoint
-- [ ] Add testing suite
+- [x] Add testing suite
+- [ ] Prioritize directions
