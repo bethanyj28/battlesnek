@@ -19,8 +19,11 @@ func (s *Snake) Move(state internal.GameState) (internal.Action, error) {
 	avoidWall := util.AvoidWall(state.Board, state.You.Head)
 	avoidOthers := util.AvoidOthers(state.Board, state.You.Head)
 	possibleDirections := findPossible(avoidSelf, avoidWall, avoidOthers) // these are things that are v important to avoid
-	if len(possibleDirections) == 0 {                                     // go out in style
+	switch len(possibleDirections) {
+	case 0: // go out in style
 		return internal.Action{Move: "up", Shout: "Like, comment, and subscribe"}, nil
+	case 1: // don't do extra work
+		return internal.Action{Move: possibleDirections[0]}, nil
 	}
 
 	food := make([]string, 4)
@@ -43,7 +46,7 @@ func (s *Snake) Info() internal.Style {
 	}
 }
 
-func findOptimal(solved ...[]string) string {
+func findOptimal(available []string, solved ...[]string) string {
 	options := map[string]int{}
 	optimal := struct {
 		dir   string
@@ -53,10 +56,17 @@ func findOptimal(solved ...[]string) string {
 		count: 0,
 	}
 
+	for _, a := range available {
+		options[a] = 1
+		// initialize optimal with something
+		optimal.dir = a
+		optimal.count = 1
+	}
+
 	for _, directions := range solved {
 		for _, direction := range directions {
-			if _, ok := options[direction]; !ok {
-				options[direction] = 1
+			if _, ok := options[direction]; !ok { // don't go that direction
+				continue
 			} else {
 				options[direction]++
 			}
