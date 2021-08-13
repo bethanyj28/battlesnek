@@ -18,8 +18,15 @@ func (s *Snake) Move(state internal.GameState) (string, error) {
 	avoidSelf := util.AvoidSelf(state.You)
 	avoidWall := util.AvoidWall(state.Board, state.You.Head)
 	avoidOthers := util.AvoidOthers(state.Board, state.You.Head)
+	food := make([]string, 4)
+	switch {
+	case state.You.Health > 50:
+		food = util.AvoidFood(state.Board, state.You.Head)
+	case state.You.Health <= 25:
+		food = util.FindFood(state.Board, state.You.Head)
+	}
 
-	return findOptimal(avoidSelf, avoidWall, avoidOthers), nil
+	return findOptimal(avoidSelf, avoidWall, avoidOthers, food), nil
 }
 
 // Info returns the style info for a simple snake

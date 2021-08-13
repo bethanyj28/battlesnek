@@ -64,6 +64,21 @@ func AvoidOthers(board internal.Board, head internal.Coord) []string {
 	return decideDir(pos, avoid)
 }
 
+// FindFood returns moves that gives food
+func FindFood(board internal.Board, head internal.Coord) []string {
+	noFood := AvoidFood(board, head)
+	return inverse(noFood)
+}
+
+// AvoidFood returns moves that avoids food
+func AvoidFood(board internal.Board, head internal.Coord) []string {
+	pos := potentialPositions(head)
+	avoid := convertCoordsToGrid(board.Food)
+
+	return decideDir(pos, avoid)
+}
+
+// TODO: cache these
 func potentialPositions(head internal.Coord) choices {
 	return choices{
 		left:  internal.Coord{X: head.X - 1, Y: head.Y},
@@ -96,4 +111,26 @@ func decideDir(potential choices, avoid matrix) []string {
 	}
 
 	return options
+}
+
+func inverse(directions []string) []string {
+	dirMap := map[string]bool{
+		left.String():  true,
+		right.String(): true,
+		up.String():    true,
+		down.String():  true,
+	}
+
+	for _, dir := range directions {
+		dirMap[dir] = false
+	}
+
+	invertedDirections := []string{}
+	for k, v := range dirMap {
+		if v {
+			invertedDirections = append(invertedDirections, k)
+		}
+	}
+
+	return invertedDirections
 }

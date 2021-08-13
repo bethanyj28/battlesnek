@@ -137,3 +137,79 @@ func TestPotentialPositions(t *testing.T) {
 		})
 	}
 }
+
+func TestAvoidFood(t *testing.T) {
+	type testcase struct {
+		name       string
+		inputBoard internal.Board
+		inputCoord internal.Coord
+		expected   []string
+	}
+
+	testcases := []testcase{
+		{
+			name: "avoid single food",
+			inputBoard: internal.Board{Food: []internal.Coord{
+				{X: 3, Y: 2}, // up
+			}},
+			inputCoord: internal.Coord{X: 3, Y: 1},
+			expected:   []string{"down", "left", "right"},
+		},
+		{
+			name: "avoid multiple foods",
+			inputBoard: internal.Board{Food: []internal.Coord{
+				{X: 3, Y: 2}, // up
+				{X: 3, Y: 0}, // down
+			}},
+			inputCoord: internal.Coord{X: 3, Y: 1},
+			expected:   []string{"left", "right"},
+		},
+	}
+
+	for _, tc := range testcases {
+		t.Run(tc.name, func(t *testing.T) {
+			is := is.New(t)
+			actual := AvoidFood(tc.inputBoard, tc.inputCoord)
+			sort.Strings(actual)
+			is.Equal(actual, tc.expected)
+		})
+	}
+}
+
+func TestFindFood(t *testing.T) {
+	type testcase struct {
+		name       string
+		inputBoard internal.Board
+		inputCoord internal.Coord
+		expected   []string
+	}
+
+	testcases := []testcase{
+		{
+			name: "find single food",
+			inputBoard: internal.Board{Food: []internal.Coord{
+				{X: 3, Y: 2}, // up
+			}},
+			inputCoord: internal.Coord{X: 3, Y: 1},
+			expected:   []string{"up"},
+		},
+		{
+			name: "find multiple foods",
+			inputBoard: internal.Board{Food: []internal.Coord{
+				{X: 3, Y: 2}, // up
+				{X: 3, Y: 0}, // down
+			}},
+			inputCoord: internal.Coord{X: 3, Y: 1},
+			expected:   []string{"down", "up"},
+		},
+	}
+
+	for _, tc := range testcases {
+		t.Run(tc.name, func(t *testing.T) {
+			is := is.New(t)
+			actual := FindFood(tc.inputBoard, tc.inputCoord)
+			sort.Strings(actual)
+			is.Equal(actual, tc.expected)
+		})
+	}
+}
