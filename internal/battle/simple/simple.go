@@ -34,7 +34,14 @@ func (s *Snake) Move(state internal.GameState) (internal.Action, error) {
 		food = util.FindFood(state.Board, state.You.Head)
 	}
 
-	return internal.Action{Move: findOptimal(possibleDirections, food)}, nil
+	foodPriorityMap := map[string]int{}
+	for _, dir := range food {
+		foodPriorityMap[dir] = 1
+	}
+
+	avoidSelfPriorityMap := util.MoveAwayFromSelf(state.You)
+
+	return internal.Action{Move: findOptimal(possibleDirections, foodPriorityMap, avoidSelfPriorityMap)}, nil
 }
 
 // Info returns the style info for a simple snake
@@ -46,7 +53,7 @@ func (s *Snake) Info() internal.Style {
 	}
 }
 
-func findOptimal(available []string, solved ...[]string) string {
+func findOptimal(available []string, prioritized ...map[string]int) string {
 	options := map[string]int{}
 	optimal := struct {
 		dir   string
@@ -63,17 +70,17 @@ func findOptimal(available []string, solved ...[]string) string {
 		optimal.count = 1
 	}
 
-	for _, directions := range solved {
-		for _, direction := range directions {
-			if _, ok := options[direction]; !ok { // don't go that direction
+	for _, directions := range prioritized {
+		for k, v := range directions {
+			if _, ok := options[k]; !ok { // don't go that direction
 				continue
 			} else {
-				options[direction]++
+				options[k] += v
 			}
 
-			if options[direction] > optimal.count {
-				optimal.dir = direction
-				optimal.count = options[direction]
+			if options[k] > optimal.count {
+				optimal.dir = k
+				optimal.count = options[k]
 			}
 		}
 	}

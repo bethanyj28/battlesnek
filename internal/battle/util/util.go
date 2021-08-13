@@ -1,6 +1,8 @@
 package util
 
 import (
+	"math"
+
 	"github.com/bethanyj28/battlesnek/internal"
 )
 
@@ -76,6 +78,38 @@ func AvoidFood(board internal.Board, head internal.Coord) []string {
 	avoid := convertCoordsToGrid(board.Food)
 
 	return decideDir(pos, avoid)
+}
+
+// MoveAwayFromSelf returns moves that are further from the snake's center of self
+func MoveAwayFromSelf(self internal.Battlesnake) map[string]int {
+	pos := potentialPositions(self.Head)
+	avgPos := averagePositions(self.Body)
+
+	distMap := map[string]int{}
+
+	for dir, p := range pos {
+		xDiffSquare := math.Pow(float64(p.X-avgPos.X), 2)
+		yDiffSquare := math.Pow(float64(p.Y-avgPos.Y), 2)
+		dist := math.Sqrt(xDiffSquare + yDiffSquare)
+		distMap[dir.String()] = int(math.Round(dist))
+	}
+
+	return distMap
+}
+
+func averagePositions(coords []internal.Coord) internal.Coord {
+	sumX := 0
+	sumY := 0
+
+	for _, coord := range coords {
+		sumX += coord.X
+		sumY += coord.Y
+	}
+
+	avgX := sumX / len(coords)
+	avgY := sumY / len(coords)
+
+	return internal.Coord{X: avgX, Y: avgY}
 }
 
 // TODO: cache these
