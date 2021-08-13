@@ -14,10 +14,15 @@ func NewSnake() *Snake {
 }
 
 // Move calculates the ideal move a simple snake should take
-func (s *Snake) Move(state internal.GameState) (string, error) {
+func (s *Snake) Move(state internal.GameState) (internal.Action, error) {
 	avoidSelf := util.AvoidSelf(state.You)
 	avoidWall := util.AvoidWall(state.Board, state.You.Head)
 	avoidOthers := util.AvoidOthers(state.Board, state.You.Head)
+	possibleDirections := findPossible(avoidSelf, avoidWall, avoidOthers) // these are things that are v important to avoid
+	if len(possibleDirections) == 0 {                                     // go out in style
+		return internal.Action{Move: "up", Shout: "Like, comment, and subscribe"}, nil
+	}
+
 	food := make([]string, 4)
 	switch {
 	case state.You.Health > 50:
@@ -26,7 +31,7 @@ func (s *Snake) Move(state internal.GameState) (string, error) {
 		food = util.FindFood(state.Board, state.You.Head)
 	}
 
-	return findOptimal(avoidSelf, avoidWall, avoidOthers, food), nil
+	return internal.Action{Move: findOptimal(possibleDirections, food)}, nil
 }
 
 // Info returns the style info for a simple snake
@@ -64,4 +69,27 @@ func findOptimal(solved ...[]string) string {
 	}
 
 	return optimal.dir
+}
+
+func findPossible(solved ...[]string) []string {
+	options := map[string]int{}
+
+	for _, directions := range solved {
+		for _, direction := range directions {
+			if _, ok := options[direction]; !ok {
+				options[direction] = 1
+			} else {
+				options[direction]++
+			}
+		}
+	}
+
+	best := []string{}
+	for k, v := range options {
+		if v == len(solved) {
+			best = append(best, k)
+		}
+	}
+
+	return best
 }

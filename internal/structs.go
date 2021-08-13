@@ -59,3 +59,9 @@ type Style struct {
 	Head  string `json:"head"`
 	Tail  string `json:"tail"`
 }
+
+// Action is the action a snake takes on move
+type Action struct {
+	Move  string `json:"move"`
+	Shout string `json:"shout,omitempty"`
+}

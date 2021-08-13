@@ -15,20 +15,23 @@ func NewSnake() *Snake {
 }
 
 // Move chooses a random direction for the snake to go
-func (s *Snake) Move(state internal.GameState) (string, error) {
+func (s *Snake) Move(state internal.GameState) (internal.Action, error) {
+	action := internal.Action{}
 	choice := rand.Intn(4)
 	switch choice {
 	case 0:
-		return "left", nil
+		action.Move = "left"
 	case 1:
-		return "right", nil
+		action.Move = "right"
 	case 2:
-		return "up", nil
+		action.Move = "up"
 	case 3:
-		return "down", nil
+		action.Move = "down"
+	default:
+		action.Move = ""
 	}
 
-	return "", nil
+	return action, nil
 }
 
 // Info returns style information about this snake
