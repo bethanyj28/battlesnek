@@ -48,3 +48,16 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install SSH Key
+        uses: shimataro/ssh-key-action@v2
+        with:
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          known-hosts: 'temp'
+      - name: Adding Known Hosts
+        run: ssh-keyscan -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
+      - name: Deploy with docker
+        run: ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "docker stop bethanyj28_battlesnek; docker pull ghcr.io/bethanyj28/battlesnek:latest; docker run --name bethanyj28_battlesnek --rm -d ghcr.io/bethanyj28/battlesnek:latest"
