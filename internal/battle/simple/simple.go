@@ -26,6 +26,7 @@ func (s *Snake) Move(state internal.GameState) (internal.Action, error) {
 		return internal.Action{Move: possibleDirections[0]}, nil
 	}
 
+	// Calculate need to find food and prioritize
 	food := make([]string, 4)
 	switch {
 	case state.You.Health > 50:
@@ -39,9 +40,17 @@ func (s *Snake) Move(state internal.GameState) (internal.Action, error) {
 		foodPriorityMap[dir] = 1
 	}
 
+	// Avoid hazards if possible
+	avoidHazards := util.AvoidHazards(state.Board, state.You.Head)
+	avoidHazardsPriorityMap := map[string]int{}
+
+	for _, dir := range avoidHazards {
+		avoidHazardsPriorityMap[dir] = 2
+	}
+
 	avoidSelfPriorityMap := util.MoveAwayFromSelf(state.You)
 
-	return internal.Action{Move: findOptimal(possibleDirections, foodPriorityMap, avoidSelfPriorityMap)}, nil
+	return internal.Action{Move: findOptimal(possibleDirections, foodPriorityMap, avoidSelfPriorityMap, avoidHazardsPriorityMap)}, nil
 }
 
 // Info returns the style info for a simple snake

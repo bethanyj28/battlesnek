@@ -66,6 +66,14 @@ func AvoidOthers(board internal.Board, head internal.Coord) []string {
 	return decideDir(pos, avoid)
 }
 
+// AvoidHazards returns moves that prevent snake from running into hazards
+func AvoidHazards(board internal.Board, head internal.Coord) []string {
+	pos := potentialPositions(head)
+	avoid := convertCoordsToGrid(board.Hazards)
+
+	return decideDir(pos, avoid)
+}
+
 // FindFood returns moves that gives food
 func FindFood(board internal.Board, head internal.Coord) []string {
 	noFood := AvoidFood(board, head)
