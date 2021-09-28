@@ -1,7 +1,6 @@
 package util
 
 import (
-	"fmt"
 	"math"
 
 	"github.com/bethanyj28/battlesnek/internal"
@@ -97,10 +96,7 @@ func MoveAwayFromSelf(self internal.Battlesnake) map[string]int {
 	distMap := map[string]int{}
 
 	for dir, p := range pos {
-		xDiffSquare := math.Pow(float64(p.X-avgPos.X), 2)
-		yDiffSquare := math.Pow(float64(p.Y-avgPos.Y), 2)
-		dist := math.Sqrt(xDiffSquare + yDiffSquare)
-		distMap[dir.String()] = int(math.Round(dist))
+		distMap[dir.String()] = intDistance(p, avgPos)
 	}
 
 	return distMap
@@ -121,9 +117,50 @@ func AvoidCollisions(self internal.Battlesnake, others []internal.Battlesnake) [
 		otherPosCoords = append(otherPosCoords, potentialPositionsSlice(snake.Head)...)
 	}
 
-	fmt.Println(otherPosCoords)
-
 	return decideDir(potentialPositions(self.Head), convertCoordsToGrid(otherPosCoords))
+}
+
+// IntrovertSnake prefers moves that take it away from other snakes
+func IntrovertSnake(self internal.Battlesnake, others []internal.Battlesnake) map[string]int {
+	pos := potentialPositions(self.Head)
+
+	distFromHeads := map[string]int{
+		left.String():  0,
+		right.String(): 0,
+		up.String():    0,
+		down.String():  0,
+	}
+
+	evalSnakes := map[string]bool{}
+	for dir, p := range pos {
+		for _, snake := range others {
+			if snake.ID == self.ID {
+				continue
+			}
+
+			if snake.Length < self.Length {
+				continue
+			}
+
+			distFromHeads[dir.String()] += intDistance(p, snake.Head)
+			evalSnakes[snake.ID] = true
+		}
+	}
+
+	for dir, dist := range distFromHeads {
+		if len(evalSnakes) > 0 {
+			distFromHeads[dir] = dist / (len(evalSnakes) * 2)
+		}
+	}
+
+	return distFromHeads
+}
+
+func intDistance(p1, p2 internal.Coord) int {
+	xDiffSquare := math.Pow(float64(p1.X-p2.X), 2)
+	yDiffSquare := math.Pow(float64(p1.Y-p2.Y), 2)
+	dist := math.Sqrt(xDiffSquare + yDiffSquare)
+	return int(math.Round(dist))
 }
 
 func averagePositions(coords []internal.Coord) internal.Coord {

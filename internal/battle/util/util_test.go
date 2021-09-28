@@ -214,11 +214,6 @@ func TestFindFood(t *testing.T) {
 	}
 }
 
-// 30 31 32 33 34
-// 20 21 22 23 24
-// 10 11 12 13 14
-// 00 01 02 03 04
-
 func TestAvoidCollisions(t *testing.T) {
 	type testcase struct {
 		name        string
@@ -253,6 +248,16 @@ func TestAvoidCollisions(t *testing.T) {
 					},
 					Length: 5,
 				},
+				{
+					ID:   "me",
+					Head: internal.Coord{X: 0, Y: 1},
+					Body: []internal.Coord{
+						{X: 0, Y: 1},
+						{X: 0, Y: 2},
+						{X: 0, Y: 3},
+					},
+					Length: 3,
+				},
 			},
 			expected: []string{"left", "up"},
 		},
@@ -277,6 +282,16 @@ func TestAvoidCollisions(t *testing.T) {
 						{X: 2, Y: 0},
 					},
 					Length: 2,
+				},
+				{
+					ID:   "me",
+					Head: internal.Coord{X: 0, Y: 1},
+					Body: []internal.Coord{
+						{X: 0, Y: 0},
+						{X: 0, Y: 1},
+						{X: 0, Y: 2},
+					},
+					Length: 3,
 				},
 			},
 			expected: []string{"down", "left", "right", "up"},
@@ -314,6 +329,16 @@ func TestAvoidCollisions(t *testing.T) {
 					},
 					Length: 3,
 				},
+				{
+					ID:   "me",
+					Head: internal.Coord{X: 3, Y: 1},
+					Body: []internal.Coord{
+						{X: 3, Y: 3},
+						{X: 3, Y: 2},
+						{X: 3, Y: 1},
+					},
+					Length: 3,
+				},
 			},
 			expected: []string{"up"},
 		},
@@ -324,6 +349,118 @@ func TestAvoidCollisions(t *testing.T) {
 			is := is.New(t)
 			actual := AvoidCollisions(tc.inputSelf, tc.inputOthers)
 			sort.Strings(actual)
+			is.Equal(actual, tc.expected)
+		})
+	}
+}
+
+// 03 13 23 33 43
+// 02 12 22 32 42
+// 01 11 21 31 41
+// 00 10 20 30 40
+
+func TestIntrovertSnake(t *testing.T) {
+	type testcase struct {
+		name        string
+		inputSelf   internal.Battlesnake
+		inputOthers []internal.Battlesnake
+		expected    map[string]int
+	}
+
+	testcases := []testcase{
+		{
+			name: "other snake longer",
+			inputSelf: internal.Battlesnake{
+				ID:   "me",
+				Head: internal.Coord{X: 0, Y: 1},
+				Body: []internal.Coord{
+					{X: 0, Y: 1},
+					{X: 0, Y: 2},
+					{X: 0, Y: 3},
+				},
+				Length: 3,
+			},
+			inputOthers: []internal.Battlesnake{
+				{
+					ID:   "other1",
+					Head: internal.Coord{X: 3, Y: 2},
+					Body: []internal.Coord{
+						{X: 3, Y: 2},
+						{X: 2, Y: 2},
+						{X: 2, Y: 3},
+						{X: 3, Y: 3},
+						{X: 4, Y: 3},
+					},
+					Length: 5,
+				},
+				{
+					ID:   "me",
+					Head: internal.Coord{X: 0, Y: 1},
+					Body: []internal.Coord{
+						{X: 0, Y: 1},
+						{X: 0, Y: 2},
+						{X: 0, Y: 3},
+					},
+					Length: 3,
+				},
+			},
+			expected: map[string]int{
+				"down":  2,
+				"left":  2,
+				"right": 1,
+				"up":    1,
+			},
+		},
+		{
+			name: "multiple snakes",
+			inputSelf: internal.Battlesnake{
+				ID:   "me",
+				Head: internal.Coord{X: 0, Y: 0},
+				Body: []internal.Coord{
+					{X: 0, Y: 0},
+				},
+				Length: 1,
+			},
+			inputOthers: []internal.Battlesnake{
+				{
+					ID:   "other1",
+					Head: internal.Coord{X: 5, Y: 5},
+					Body: []internal.Coord{
+						{X: 5, Y: 5},
+					},
+					Length: 1,
+				},
+				{
+					ID:   "other2",
+					Head: internal.Coord{X: 5, Y: 0},
+					Body: []internal.Coord{
+						{X: 5, Y: 0},
+					},
+					Length: 1,
+				},
+				{
+					ID:   "me",
+					Head: internal.Coord{X: 0, Y: 0},
+					Body: []internal.Coord{
+						{X: 0, Y: 0},
+					},
+					Length: 1,
+				},
+			},
+			expected: map[string]int{
+				"down":  3,
+				"left":  3,
+				"right": 2,
+				"up":    2,
+			},
+		},
+	}
+
+	for _, tc := range testcases {
+		t.Run(tc.name, func(t *testing.T) {
+			is := is.New(t)
+			actual := IntrovertSnake(tc.inputSelf, tc.inputOthers)
+
 			is.Equal(actual, tc.expected)
 		})
 	}

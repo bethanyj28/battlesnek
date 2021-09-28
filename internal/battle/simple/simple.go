@@ -29,7 +29,7 @@ func (s *Snake) Move(state internal.GameState) (internal.Action, error) {
 	// Calculate need to find food and prioritize
 	food := make([]string, 4)
 	switch {
-	case state.You.Health > 50:
+	case state.You.Health > 75:
 		food = util.AvoidFood(state.Board, state.You.Head)
 	case state.You.Health <= 25:
 		food = util.FindFood(state.Board, state.You.Head)
@@ -43,8 +43,15 @@ func (s *Snake) Move(state internal.GameState) (internal.Action, error) {
 	// Avoid hazards if possible
 	avoidHazards := util.AvoidHazards(state.Board, state.You.Head)
 	avoidHazardsPriorityMap := map[string]int{}
+	healthMultiplier := 2
+	switch {
+	case state.You.Health > 75:
+		healthMultiplier = 1
+	case state.You.Health < 25:
+		healthMultiplier = 4
+	}
 	for _, dir := range avoidHazards {
-		avoidHazardsPriorityMap[dir] = 2
+		avoidHazardsPriorityMap[dir] = healthMultiplier
 	}
 
 	// avoid collisions with stronk snakes
@@ -55,8 +62,9 @@ func (s *Snake) Move(state internal.GameState) (internal.Action, error) {
 	}
 
 	avoidSelfPriorityMap := util.MoveAwayFromSelf(state.You)
+	introvertPriorityMap := util.IntrovertSnake(state.You, state.Board.Snakes)
 
-	return internal.Action{Move: findOptimal(possibleDirections, foodPriorityMap, avoidSelfPriorityMap, avoidHazardsPriorityMap, avoidCollisionsPriorityMap)}, nil
+	return internal.Action{Move: findOptimal(possibleDirections, foodPriorityMap, avoidSelfPriorityMap, avoidHazardsPriorityMap, avoidCollisionsPriorityMap, introvertPriorityMap)}, nil
 }
 
 // Info returns the style info for a simple snake
