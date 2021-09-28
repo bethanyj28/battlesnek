@@ -31,7 +31,7 @@ func (s *Snake) Move(state internal.GameState) (internal.Action, error) {
 	switch {
 	case state.You.Health > 75:
 		food = util.AvoidFood(state.Board, state.You.Head)
-	case state.You.Health <= 25:
+	case state.You.Health <= 50:
 		food = util.FindFood(state.Board, state.You.Head)
 	}
 
@@ -58,11 +58,15 @@ func (s *Snake) Move(state internal.GameState) (internal.Action, error) {
 	avoidCollisions := util.AvoidCollisions(state.You, state.Board.Snakes)
 	avoidCollisionsPriorityMap := map[string]int{}
 	for _, dir := range avoidCollisions {
-		avoidCollisionsPriorityMap[dir] = 3
+		avoidCollisionsPriorityMap[dir] = 4
 	}
 
 	avoidSelfPriorityMap := util.MoveAwayFromSelf(state.You)
-	introvertPriorityMap := util.IntrovertSnake(state.You, state.Board.Snakes)
+	introvert := util.IntrovertSnake(state.You, state.Board.Snakes, state.Board.Height)
+	introvertPriorityMap := map[string]int{}
+	for _, dir := range introvert {
+		introvertPriorityMap[dir] = 3
+	}
 
 	return internal.Action{Move: findOptimal(possibleDirections, foodPriorityMap, avoidSelfPriorityMap, avoidHazardsPriorityMap, avoidCollisionsPriorityMap, introvertPriorityMap)}, nil
 }

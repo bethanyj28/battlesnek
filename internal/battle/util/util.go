@@ -121,7 +121,7 @@ func AvoidCollisions(self internal.Battlesnake, others []internal.Battlesnake) [
 }
 
 // IntrovertSnake prefers moves that take it away from other snakes
-func IntrovertSnake(self internal.Battlesnake, others []internal.Battlesnake) map[string]int {
+func IntrovertSnake(self internal.Battlesnake, others []internal.Battlesnake, boardSize int) []string {
 	pos := potentialPositions(self.Head)
 
 	distFromHeads := map[string]int{
@@ -147,13 +147,20 @@ func IntrovertSnake(self internal.Battlesnake, others []internal.Battlesnake) ma
 		}
 	}
 
+	dirs := []string{}
+
 	for dir, dist := range distFromHeads {
+		avgDist := dist
 		if len(evalSnakes) > 0 {
-			distFromHeads[dir] = dist / (len(evalSnakes) * 2)
+			avgDist = dist / (len(evalSnakes) * 2)
+		}
+
+		if avgDist > boardSize/3 {
+			dirs = append(dirs, dir)
 		}
 	}
 
-	return distFromHeads
+	return dirs
 }
 
 func intDistance(p1, p2 internal.Coord) int {

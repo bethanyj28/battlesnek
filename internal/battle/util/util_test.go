@@ -364,7 +364,7 @@ func TestIntrovertSnake(t *testing.T) {
 		name        string
 		inputSelf   internal.Battlesnake
 		inputOthers []internal.Battlesnake
-		expected    map[string]int
+		expected    []string
 	}
 
 	testcases := []testcase{
@@ -404,12 +404,7 @@ func TestIntrovertSnake(t *testing.T) {
 					Length: 3,
 				},
 			},
-			expected: map[string]int{
-				"down":  2,
-				"left":  2,
-				"right": 1,
-				"up":    1,
-			},
+			expected: []string{"down", "left"},
 		},
 		{
 			name: "multiple snakes",
@@ -447,19 +442,15 @@ func TestIntrovertSnake(t *testing.T) {
 					Length: 1,
 				},
 			},
-			expected: map[string]int{
-				"down":  3,
-				"left":  3,
-				"right": 2,
-				"up":    2,
-			},
+			expected: []string{"down", "left", "right", "up"},
 		},
 	}
 
 	for _, tc := range testcases {
 		t.Run(tc.name, func(t *testing.T) {
 			is := is.New(t)
-			actual := IntrovertSnake(tc.inputSelf, tc.inputOthers)
+			actual := IntrovertSnake(tc.inputSelf, tc.inputOthers, 5)
+			sort.Strings(actual)
 
 			is.Equal(actual, tc.expected)
 		})
