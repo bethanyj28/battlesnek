@@ -1,6 +1,7 @@
 package util
 
 import (
+	"fmt"
 	"math"
 
 	"github.com/bethanyj28/battlesnek/internal"
@@ -105,6 +106,26 @@ func MoveAwayFromSelf(self internal.Battlesnake) map[string]int {
 	return distMap
 }
 
+// AvoidCollisions returns moves that avoid collisions with stronger snakes
+func AvoidCollisions(self internal.Battlesnake, others []internal.Battlesnake) []string {
+	otherPosCoords := []internal.Coord{}
+	for _, snake := range others {
+		if snake.ID == self.ID {
+			continue
+		}
+
+		if snake.Length < self.Length {
+			continue
+		}
+
+		otherPosCoords = append(otherPosCoords, potentialPositionsSlice(snake.Head)...)
+	}
+
+	fmt.Println(otherPosCoords)
+
+	return decideDir(potentialPositions(self.Head), convertCoordsToGrid(otherPosCoords))
+}
+
 func averagePositions(coords []internal.Coord) internal.Coord {
 	sumX := 0
 	sumY := 0
@@ -140,6 +161,15 @@ func convertCoordsToGrid(coords []internal.Coord) matrix {
 	}
 
 	return grid
+}
+
+func potentialPositionsSlice(head internal.Coord) []internal.Coord {
+	positions := []internal.Coord{}
+	for _, pos := range potentialPositions(head) {
+		positions = append(positions, pos)
+	}
+
+	return positions
 }
 
 func decideDir(potential choices, avoid matrix) []string {

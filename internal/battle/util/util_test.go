@@ -213,3 +213,118 @@ func TestFindFood(t *testing.T) {
 		})
 	}
 }
+
+// 30 31 32 33 34
+// 20 21 22 23 24
+// 10 11 12 13 14
+// 00 01 02 03 04
+
+func TestAvoidCollisions(t *testing.T) {
+	type testcase struct {
+		name        string
+		inputSelf   internal.Battlesnake
+		inputOthers []internal.Battlesnake
+		expected    []string
+	}
+
+	testcases := []testcase{
+		{
+			name: "other snake longer",
+			inputSelf: internal.Battlesnake{
+				ID:   "me",
+				Head: internal.Coord{X: 0, Y: 1},
+				Body: []internal.Coord{
+					{X: 0, Y: 1},
+					{X: 0, Y: 2},
+					{X: 0, Y: 3},
+				},
+				Length: 3,
+			},
+			inputOthers: []internal.Battlesnake{
+				{
+					ID:   "other1",
+					Head: internal.Coord{X: 1, Y: 0},
+					Body: []internal.Coord{
+						{X: 1, Y: 0},
+						{X: 2, Y: 0},
+						{X: 3, Y: 0},
+						{X: 4, Y: 0},
+						{X: 5, Y: 0},
+					},
+					Length: 5,
+				},
+			},
+			expected: []string{"left", "up"},
+		},
+		{
+			name: "other snake shorter",
+			inputSelf: internal.Battlesnake{
+				ID:   "me",
+				Head: internal.Coord{X: 0, Y: 1},
+				Body: []internal.Coord{
+					{X: 0, Y: 0},
+					{X: 0, Y: 1},
+					{X: 0, Y: 2},
+				},
+				Length: 3,
+			},
+			inputOthers: []internal.Battlesnake{
+				{
+					ID:   "other1",
+					Head: internal.Coord{X: 1, Y: 0},
+					Body: []internal.Coord{
+						{X: 1, Y: 0},
+						{X: 2, Y: 0},
+					},
+					Length: 2,
+				},
+			},
+			expected: []string{"down", "left", "right", "up"},
+		},
+		{
+			name: "multiple snakes",
+			inputSelf: internal.Battlesnake{
+				ID:   "me",
+				Head: internal.Coord{X: 3, Y: 1},
+				Body: []internal.Coord{
+					{X: 3, Y: 3},
+					{X: 3, Y: 2},
+					{X: 3, Y: 1},
+				},
+				Length: 3,
+			},
+			inputOthers: []internal.Battlesnake{
+				{
+					ID:   "other1",
+					Head: internal.Coord{X: 2, Y: 0},
+					Body: []internal.Coord{
+						{X: 2, Y: 0},
+						{X: 1, Y: 0},
+						{X: 0, Y: 0},
+					},
+					Length: 3,
+				},
+				{
+					ID:   "other2",
+					Head: internal.Coord{X: 5, Y: 1},
+					Body: []internal.Coord{
+						{X: 5, Y: 1},
+						{X: 6, Y: 1},
+						{X: 7, Y: 1},
+					},
+					Length: 3,
+				},
+			},
+			expected: []string{"up"},
+		},
+	}
+
+	for _, tc := range testcases {
+		t.Run(tc.name, func(t *testing.T) {
+			is := is.New(t)
+			actual := AvoidCollisions(tc.inputSelf, tc.inputOthers)
+			sort.Strings(actual)
+			is.Equal(actual, tc.expected)
+		})
+	}
+}

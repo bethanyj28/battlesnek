@@ -43,14 +43,20 @@ func (s *Snake) Move(state internal.GameState) (internal.Action, error) {
 	// Avoid hazards if possible
 	avoidHazards := util.AvoidHazards(state.Board, state.You.Head)
 	avoidHazardsPriorityMap := map[string]int{}
-
 	for _, dir := range avoidHazards {
 		avoidHazardsPriorityMap[dir] = 2
 	}
 
+	// avoid collisions with stronk snakes
+	avoidCollisions := util.AvoidCollisions(state.You, state.Board.Snakes)
+	avoidCollisionsPriorityMap := map[string]int{}
+	for _, dir := range avoidCollisions {
+		avoidCollisionsPriorityMap[dir] = 3
+	}
+
 	avoidSelfPriorityMap := util.MoveAwayFromSelf(state.You)
 
-	return internal.Action{Move: findOptimal(possibleDirections, foodPriorityMap, avoidSelfPriorityMap, avoidHazardsPriorityMap)}, nil
+	return internal.Action{Move: findOptimal(possibleDirections, foodPriorityMap, avoidSelfPriorityMap, avoidHazardsPriorityMap, avoidCollisionsPriorityMap)}, nil
 }
 
 // Info returns the style info for a simple snake
