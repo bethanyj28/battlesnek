@@ -20,4 +20,4 @@ To run this api locally, simply run `make build && make run`, and it will launch
 - [x] Create a more intelligent snake
 - [ ] Dynamically switch snakes with authenticated endpoint
 - [x] Add testing suite
-- [ ] Prioritize directions
+- [x] Prioritize directions
