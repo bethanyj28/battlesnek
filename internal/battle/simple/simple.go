@@ -47,7 +47,7 @@ func (s *Snake) Move(state internal.GameState) (internal.Action, error) {
 	switch {
 	case state.You.Health > 75:
 		healthMultiplier = 1
-	case state.You.Health < 25:
+	case state.You.Health < 50:
 		healthMultiplier = 4
 	}
 	for _, dir := range avoidHazards {
