@@ -1,6 +1,7 @@
 package util
 
 import (
+	"fmt"
 	"math"
 
 	"github.com/bethanyj28/battlesnek/internal"
@@ -121,7 +122,7 @@ func AvoidCollisions(self internal.Battlesnake, others []internal.Battlesnake) [
 }
 
 // IntrovertSnake prefers moves that take it away from other snakes
-func IntrovertSnake(self internal.Battlesnake, others []internal.Battlesnake, boardSize int) []string {
+func IntrovertSnake(self internal.Battlesnake, others []internal.Battlesnake, limit int) []string {
 	pos := potentialPositions(self.Head)
 
 	distFromHeads := map[string]int{
@@ -142,7 +143,9 @@ func IntrovertSnake(self internal.Battlesnake, others []internal.Battlesnake, bo
 				continue
 			}
 
-			distFromHeads[dir.String()] += intDistance(p, snake.Head)
+			avgPos := averagePositions(snake.Body)
+
+			distFromHeads[dir.String()] += intDistance(p, avgPos)
 			evalSnakes[snake.ID] = true
 		}
 	}
@@ -152,10 +155,11 @@ func IntrovertSnake(self internal.Battlesnake, others []internal.Battlesnake, bo
 	for dir, dist := range distFromHeads {
 		avgDist := dist
 		if len(evalSnakes) > 0 {
-			avgDist = dist / (len(evalSnakes) * 2)
+			avgDist = dist / len(evalSnakes)
 		}
 
-		if avgDist > boardSize/3 {
+		fmt.Println(avgDist)
+		if avgDist > limit {
 			dirs = append(dirs, dir)
 		}
 	}

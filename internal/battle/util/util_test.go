@@ -375,10 +375,8 @@ func TestIntrovertSnake(t *testing.T) {
 				Head: internal.Coord{X: 0, Y: 1},
 				Body: []internal.Coord{
 					{X: 0, Y: 1},
-					{X: 0, Y: 2},
-					{X: 0, Y: 3},
 				},
-				Length: 3,
+				Length: 1,
 			},
 			inputOthers: []internal.Battlesnake{
 				{
@@ -386,25 +384,19 @@ func TestIntrovertSnake(t *testing.T) {
 					Head: internal.Coord{X: 3, Y: 2},
 					Body: []internal.Coord{
 						{X: 3, Y: 2},
-						{X: 2, Y: 2},
-						{X: 2, Y: 3},
-						{X: 3, Y: 3},
-						{X: 4, Y: 3},
 					},
-					Length: 5,
+					Length: 1,
 				},
 				{
 					ID:   "me",
 					Head: internal.Coord{X: 0, Y: 1},
 					Body: []internal.Coord{
 						{X: 0, Y: 1},
-						{X: 0, Y: 2},
-						{X: 0, Y: 3},
 					},
-					Length: 3,
+					Length: 1,
 				},
 			},
-			expected: []string{"down", "left"},
+			expected: []string{"down", "left", "up"},
 		},
 		{
 			name: "multiple snakes",
@@ -449,7 +441,7 @@ func TestIntrovertSnake(t *testing.T) {
 	for _, tc := range testcases {
 		t.Run(tc.name, func(t *testing.T) {
 			is := is.New(t)
-			actual := IntrovertSnake(tc.inputSelf, tc.inputOthers, 5)
+			actual := IntrovertSnake(tc.inputSelf, tc.inputOthers, 2)
 			sort.Strings(actual)
 
 			is.Equal(actual, tc.expected)
