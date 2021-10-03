@@ -1,7 +1,6 @@
 package util
 
 import (
-	"fmt"
 	"math"
 
 	"github.com/bethanyj28/battlesnek/internal"
@@ -158,7 +157,6 @@ func IntrovertSnake(self internal.Battlesnake, others []internal.Battlesnake, li
 			avgDist = dist / len(evalSnakes)
 		}
 
-		fmt.Println(avgDist)
 		if avgDist > limit {
 			dirs = append(dirs, dir)
 		}
