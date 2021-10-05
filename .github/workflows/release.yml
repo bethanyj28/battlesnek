@@ -59,4 +59,4 @@ jobs:
           key: ${{ secrets.OMEGA_SSH_KEY }}
           known_hosts: ${{ secrets.KNOWN_HOSTS }}
       - name: Deploy with docker
-        run: ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} -p ${{ secrets.SSH_PORT }} "docker stop bethanyj28_battlesnek; docker pull ghcr.io/bethanyj28/battlesnek:latest; docker run --name bethanyj28_battlesnek --restart unless-stopped -d --network=proxy ghcr.io/bethanyj28/battlesnek:latest"
+        run: ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} -p ${{ secrets.SSH_PORT }} "docker stop bethanyj28_battlesnek; docker rm -v bethanyj28_battlesnek; docker pull ghcr.io/bethanyj28/battlesnek:latest; docker run --name bethanyj28_battlesnek --restart unless-stopped -d --network=proxy ghcr.io/bethanyj28/battlesnek:latest"
