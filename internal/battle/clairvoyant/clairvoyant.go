@@ -23,7 +23,8 @@ func (s *Snake) Move(state internal.GameState) (internal.Action, error) {
 // Info ensures the snake is stylin and profilin
 func (s *Snake) Info() internal.Style {
 	return internal.Style{
-		Color: "#76A5AF",
+		//Color: "#76A5AF",
+		Color: "#00cc99",
 		Head:  "beluga",
 		Tail:  "freckled",
 	}
