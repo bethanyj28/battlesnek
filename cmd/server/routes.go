@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/gorilla/mux"
+	"github.com/newrelic/go-agent/v3/integrations/nrgorilla"
 )
 
 func (s *server) buildHTTPServer(addr string, timeout time.Duration) {
@@ -18,6 +19,7 @@ func (s *server) buildHTTPServer(addr string, timeout time.Duration) {
 
 func (s *server) buildRoutes() *mux.Router {
 	r := mux.NewRouter()
+	r.Use(nrgorilla.Middleware(s.nrApp))
 
 	r.HandleFunc("/", s.handleIndex())
 	r.HandleFunc("/health", s.handleHealth())
