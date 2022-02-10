@@ -86,12 +86,14 @@ func potentialPositions(head internal.Coord) choices {
 
 func checkPossible(initialState internal.GameState, grid matrix, potential internal.Coord, otherSnakeLength map[string]int32) bool {
 	// check walls
-	if potential.X >= initialState.Board.Width || potential.X < 0 {
-		return false
-	}
+	if initialState.Game.Ruleset.Name != "wrapped" {
+		if potential.X >= initialState.Board.Width || potential.X < 0 {
+			return false
+		}
 
-	if potential.Y >= initialState.Board.Height || potential.Y < 0 {
-		return false
+		if potential.Y >= initialState.Board.Height || potential.Y < 0 {
+			return false
+		}
 	}
 
 	// check hazards
