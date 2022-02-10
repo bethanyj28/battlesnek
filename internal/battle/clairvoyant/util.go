@@ -50,6 +50,10 @@ func convertBoardToMatrix(state internal.GameState) matrix {
 			obj = you
 		}
 		for _, coord := range snake.Body {
+			if coord.Equals(snake.Head) && obj != you {
+				grid = addCoordToMatrix(coord, grid, snake.ID)
+				continue
+			}
 			grid = addCoordToMatrix(coord, grid, obj.String())
 		}
 	}
@@ -75,25 +79,54 @@ func addCoordToMatrix(coord internal.Coord, grid matrix, object string) matrix {
 	return grid
 }
 
-func potentialPositions(head internal.Coord) choices {
-	return choices{
+func potentialPositions(head internal.Coord, state internal.GameState) choices {
+	c := choices{
 		left:  internal.Coord{X: head.X - 1, Y: head.Y},
 		right: internal.Coord{X: head.X + 1, Y: head.Y},
 		up:    internal.Coord{X: head.X, Y: head.Y + 1},
 		down:  internal.Coord{X: head.X, Y: head.Y - 1},
 	}
+
+	if state.Game.Ruleset.Name == "wrapped" {
+		return wrappedPotentialPositions(c, state.Board)
+	}
+
+	return c
+}
+
+func wrappedPotentialPositions(c choices, board internal.Board) choices {
+	for _, coord := range c {
+		if coord.X >= board.Width {
+			coord.X = 0
+			continue
+		}
+
+		if coord.X < 0 {
+			coord.X = board.Width - 1
+			continue
+		}
+
+		if coord.Y >= board.Height {
+			coord.Y = 0
+			continue
+		}
+
+		if coord.Y < 0 {
+			coord.Y = board.Height - 1
+			continue
+		}
+	}
+	return c
 }
 
 func checkPossible(initialState internal.GameState, grid matrix, potential internal.Coord, otherSnakeLength map[string]int32) bool {
 	// check walls
-	if initialState.Game.Ruleset.Name != "wrapped" {
-		if potential.X >= initialState.Board.Width || potential.X < 0 {
-			return false
-		}
+	if potential.X >= initialState.Board.Width || potential.X < 0 {
+		return false
+	}
 
-		if potential.Y >= initialState.Board.Height || potential.Y < 0 {
-			return false
-		}
+	if potential.Y >= initialState.Board.Height || potential.Y < 0 {
+		return false
 	}
 
 	// check hazards
@@ -148,14 +181,14 @@ func findOptimal(state internal.GameState, movesLeft int) string {
 		if snake.ID == state.You.ID {
 			continue
 		}
-		p := potentialPositions(snake.Head)
+		p := potentialPositions(snake.Head, state)
 		for _, pp := range p {
 			grid = moveEnemiesForward(snake.Head, pp, snake, grid)
 		}
 	}
 
 	health := float64(state.You.Health) / 100
-	potential := potentialPositions(state.You.Head)
+	potential := potentialPositions(state.You.Head, state)
 	analysis := map[direction]float64{}
 	otherSnakes := mapSnakeLengths(state.Board.Snakes)
 	for d, p := range potential {
@@ -216,7 +249,7 @@ func lookahead(movesLeft int, r route, initialState internal.GameState, otherSna
 		}
 	}
 
-	potential := potentialPositions(option)
+	potential := potentialPositions(option, initialState)
 	grid = addCoordToMatrix(option, grid, you.String())
 	for _, p := range potential {
 		movesLeft--

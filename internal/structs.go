@@ -53,6 +53,14 @@ type Coord struct {
 	Y int `json:"y"`
 }
 
+// Equals returns if the coordinate is equal to another one
+func (c Coord) Equals(other Coord) bool {
+	if c.X == other.X && c.Y == other.Y {
+		return true
+	}
+	return false
+}
+
 // Style is the style of the snake
 type Style struct {
 	Color string `json:"color"`
